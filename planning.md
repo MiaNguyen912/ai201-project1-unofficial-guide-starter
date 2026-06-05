@@ -10,6 +10,14 @@
 ## Domain
 
 <!-- What domain did you choose? Why is this knowledge valuable and hard to find through official channels? -->
+I have chosen the domain "Housing and Dorms at UC Irvine" because I used to have questions like:
+- "Which dorms are quiet versus social, and which suit freshmen vs upperclassmen?"
+- "What hidden costs should I expect besides housing rates?"
+- "Is the UCI housing lottery actually random, or are there patterns students report?"
+- "how is the safety level at dorm X?"
+- "how is the living cost for off‑campus complexes near UCI compared to on‑campus dorm options?"
+
+This knowledge is valuable because it usually comes from students' practical experience about on‑campus and nearby housing, including lottery behavior, waitlist tactics, roommate fit, maintenance responsiveness, hidden costs, and move‑in logistics, etc. The official pages list rules and rates but rarely capture timing tricks, social dynamics, or real-world issues that students depend on.
 
 ---
 
@@ -20,16 +28,17 @@
 
 | # | Source | Description | URL or location |
 |---|--------|-------------|-----------------|
-| 1 | | | |
-| 2 | | | |
-| 3 | | | |
-| 4 | | | |
-| 5 | | | |
-| 6 | | | |
-| 7 | | | |
-| 8 | | | |
-| 9 | | | |
-| 10 | | | |
+| 1 |Reddit|students sharing and comparing their experiences and opinions on housing at UCI, including costs, availability, and the challenges of finding affordable on-campus or nearby housing.|https://www.reddit.com/r/UCI/comments/1b40x2f/housing/|
+| 2 |ratemydorm|a student review-based ranking of UC Irvine dorms that compares housing options using crowd-sourced ratings and written experiences about comfort, location, cost, and overall living quality.|https://www.ratemydorm.com/dorms-ranked/university-of-california-irvine|
+| 3 |wordpress blog|a detailed student-written review of UC Irvine undergraduate housing that compares and ranks the on-campus dorms and apartment communities based on livability, amenities, social life, and overall student experience.|https://campusobscura.wordpress.com/2024/06/11/the-best-and-worst-of-ucis-undergrad-on-campus-housing/|
+| 4 |Reddit|student asking for advice about freshman dorm options and get advice|https://www.reddit.com/r/UCI/comments/1ruj1dt/dorms/|
+| 5 |Reddit|a first-year student’s breakdown of UC Irvine dorm life, comparing Mesa Court and Middle Earth, sharing pros and cons like location, bathroom quality, social life, and overall living experience.|https://www.reddit.com/r/UCI/comments/1jckpkn/first_year_housing_scoop/|
+| 6 |society19 blog|article about a student's ranking of UC Irvine dorms that compares the different housing communities and explains their pros and cons based on location, amenities, room quality, and overall freshman experience.|https://www.society19.com/ultimate-ranking-uci-dorms/|
+| 7 |prked blog|an insider guide to UC Irvine undergraduate housing that explains the different dorm communities and compares their layouts, social atmosphere, amenities, and tradeoffs to help incoming students choose where to live.|https://prked.com/post/deciphering-the-dorms-an-insiders-guide-to-the-best-housing-at-uc-irvine|
+| 8 |tripalink blog|a comparison of UC Irvine dorms versus off-campus housing|https://tripalink.com/blog/uc-irvine:-dorms-vs.-off-campus-housing|
+| 9 |Reddit|dorm recommendations and application tips for incoming UCI freshmen|https://www.reddit.com/r/UCI/comments/1t00phj/dorm_recommendations_and_application_tips_for/|
+| 10 |Reddit|advice on how to find housing near UCI|https://www.reddit.com/r/UCI/comments/1luxaac/where_to_look_for_housing/|
+| 11 |Reddit|advice on housing options for continuing students|https://www.reddit.com/r/UCI/comments/1oa9vmh/housing_recs_for_second_yr/|
 
 ---
 
