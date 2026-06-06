@@ -142,7 +142,7 @@ graph LR
     A["Document Ingestion (use Python file i/o on downloaded text-based documents inside docs/)"] --> B["Chunking (LangChain’s SemanticChunker + fixed-size strategy)"]
     B --> C["Embedding + Vector Store (sentence-transformers/bge-base-en-v1.5 + ChromaDB)"]
     C --> D["Retrieval (cosine similarity + top-k search from chromadb)"]
-    D --> E["Generation (llama-3.3-70b-versatile LLM model)"]
+    D --> E["Generation (llama-3.3-70b-versatile LLM model)"] 
 ```
 
 ---
@@ -161,7 +161,9 @@ graph LR
 
 **Milestone 3 — Ingestion and chunking:** I'll give github copilot my documents and the chunking strategy, chunk size, and overlap size stated in planning.md. I'll ask it to analyze the doc and define important metadata I should include with each chunk. Then, the AI will help me implement ingest_documents() and chunk_document(doc).
 
-ingest_documents() should load the raw documents, clean or preprocess them as needed (remove navigation text, ads, etc.), and produce structured text ready for chunking.
+Before ingesting the docs, I'll ask claude to generate preprocess_pdf() where pdf files saved in the documents/ folder are extracted, clean, and pre-processed (remove navigation text, ads, etc.) to reduce noise.
+
+ingest_documents() should load the cleaned documents from the preprocess_pdf(), augmented the text with appropriate metadata (timestamp, site name, url) and produce structured dictionary with text ready for chunking.
 
 chunk_document() should split the documents into chunks using semantic chunking for long-review docs, and sentence chunking for docs with short comments.
 

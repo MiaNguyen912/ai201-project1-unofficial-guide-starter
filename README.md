@@ -7,6 +7,46 @@
 
 ---
 
+## Getting Started
+
+### 1. Fork and clone
+
+Fork this repo, then clone your fork locally.
+
+### 2. Create a virtual environment
+
+```bash
+python -m venv .venv
+source .venv/bin/activate      # Mac/Linux
+# or: .venv\Scripts\activate   # Windows
+```
+
+### 3. Install dependencies
+
+```bash
+pip install -r requirements.txt
+```
+
+> **Note:** `sentence-transformers` will download the embedding model (~80MB) on first run. This only happens once — it's cached locally afterward.
+
+### 4. Add your Groq API key
+
+```bash
+cp .env.example .env
+```
+
+Open `.env` and replace `your_key_here` with your key from [console.groq.com](https://console.groq.com). No credit card required.
+
+### 5. Run the app
+
+```bash
+python app.py
+```
+
+
+
+
+
 ## Domain
 
 <!-- What topic or category of knowledge does your system cover?
