@@ -47,14 +47,28 @@ This knowledge is valuable because it usually comes from students' practical exp
 <!-- How will you split documents into chunks?
      State your chunk size (in tokens or characters), overlap size, and explain why those
      numbers fit the structure of your documents.
-     A review-heavy corpus warrants different chunking than a long FAQ. -->
+     A review-heavy corpus warrants different chunking than a long FAQ. 
+     
+     Guiding questions — use these to think it through before deciding:
+     - Are your documents short reviews (1–3 sentences) or long guides (many paragraphs)? How does that affect the right chunk size?
+     - If a key fact spans two adjacent chunks, will either chunk be retrievable on its own? What does overlap help with?
+     - How would you know if your chunks are too small? Too large? What would bad retrieval results look like in each case?
 
-**Chunk size:**
+     Useful AI prompts:
+     - "Explain how chunk size affects retrieval quality for short, opinion-based reviews."
+     - "What are the tradeoffs between chunking by paragraph vs. fixed character count for [my document type]?"
+     - "If I use 200-character chunks for review text, what kinds of queries might this fail for?"]
 
-**Overlap:**
+-->
+
+**Chunk size:** Semantic chunks for long guide sections + 50-characters fixed-size chunks for short comment/review Reddit
+
+**Overlap:** 10 words when fixed-size splitting is needed
 
 **Reasoning:**
+After skimming the selected docs I noticed two patterns: Reddit threads contain many short comments (1–3 sentences), while the review/blog corpus has longer, multi-paragraph guides. Because of that mix, I should not force every document into the same fixed size. Instead, I will keep short comments and short reviews intact when possible, and use LangChain’s `SemanticChunker` for longer guide-style pages so the chunks follow topic boundaries.
 
+For short, opinion-based reviews, chunking should preserve the full fact. If I split them too short, I may separate one fact into many chunks and lose its overall meaning, and if I make them too large, I may mix multiple topics together. For long guides, semantic chunking should keep related details together, and a small overlap helps preserve facts that cross chunk boundaries.
 ---
 
 ## Retrieval Approach
@@ -63,13 +77,23 @@ This knowledge is valuable because it usually comes from students' practical exp
      How many chunks will you retrieve per query (top-k)?
      If you were deploying this for real users and cost wasn't a constraint, what tradeoffs
      would you weigh in choosing a different embedding model — context length, multilingual
-     support, accuracy on domain-specific text, latency? -->
+     support, accuracy on domain-specific text, latency? 
+     
+     Guiding questions:
+     - How many retrieved chunks is enough to give the LLM useful context? What happens if you retrieve too few? Too many?
+     - Why does semantic search find relevant chunks even when the query doesn't share exact words with the document?
 
-**Embedding model:**
+     Useful AI prompts:
+     - "What are different strategies for structuring embeddings for short, opinion-based text?"
+     - "What does top-k mean in a retrieval system, and what are the tradeoffs of setting it too high vs. too low?"]
+-->
 
-**Top-k:**
+**Embedding model:** bge-base-en-v1.5 via sentence-transformers
 
-**Production tradeoff reflection:**
+**Top-k:** 10
+
+**Production tradeoff reflection:** a simpler embedding model would be more memory-efficient and likely sufficient for a small project. However, I’m choosing the stronger model bge-base-en-v1.5 because it should improve semantic matching for subjective, opinion-heavy text. For retrieval step, I would have 2 retrieval functions, one for plain ChromaDB sematic search, and one for semantic + BM25 keyword search, so i can observe the tradeoff between pipeline complexity and effectiveness. Choosing k also comes with a tradeoff because higher k (more chunks) can give richer context, but may add noise to the context and make the final answer less focused.
+
 
 ---
 
@@ -82,11 +106,12 @@ This knowledge is valuable because it usually comes from students' practical exp
 
 | # | Question | Expected answer |
 |---|----------|-----------------|
-| 1 | | |
-| 2 | | |
-| 3 | | |
-| 4 | | |
-| 5 | | |
+| 1 |Which dorms are quieter or more social, and which suit freshmen vs upperclassmen?|Mesa Court is often more social and Middle Earth is more quiet, and freshmen are required to stay in either of these. For continuing/transfer students, the Arroyo Vista apartments are one of the housing choices for them.|
+| 2 |What hidden costs should I expect besides housing rates?|Common extra costs include meal plans for on-campus dorms, separate parking fees for ACC/off-campus housing, and utilities in some apartments.|
+| 3 |Is the UCI housing lottery actually random, or are there patterns students report?|The process is competitive and lottery-like.|
+| 4 |how is the safety level at Middle Earth?|Middle Earth is generally safe, but students mention some practical issues in the classics like older facilities, pests, and maintenance problems|
+| 5 |how is the living cost for off‑campus complexes near UCI compared to on‑campus dorm options?|On-campus dorms can be expensive especially when meal plan are required. Off-campus can be more flexible, but not always cheaper.|
+
 
 ---
 
@@ -96,19 +121,29 @@ This knowledge is valuable because it usually comes from students' practical exp
      Consider: noisy or inconsistent documents, missing source attribution, off-topic
      retrieval, chunks that split key information across boundaries. -->
 
-1.
+1. Noisy or inconsistent documents: the corpus mixes student reviews, blog posts, and Reddit comments, so the same dorm can be described very differently across sources. That can confuse retrieval and produce contradictory answers.
 
-2.
+2. Chunks split key context: if a review gets cut in the middle of an opinion or example, the retriever may miss the full meaning. This is risky for short comments where one sentence contains the main judgment.
+
+3. Off-topic retrieval: some posts include broad housing advice or unrelated discussion, so the system may retrieve general housing content instead of the exact dorm-specific answer the user asked for.
 
 ---
 
 ## Architecture
 
-<!-- Draw a diagram of your pipeline showing the five stages:
+<!-- Draw a diagram (hand-drawn sketch, an ASCII diagram, Mermaid diagram, etc.) of your pipeline showing the five stages:
      Document Ingestion → Chunking → Embedding + Vector Store → Retrieval → Generation
      Label each stage with the tool or library you're using.
      You can use ASCII art, a Mermaid diagram, or embed a sketch as an image.
      You'll use this diagram as context when prompting AI tools to implement each stage. -->
+
+```mermaid
+graph LR
+    A["Document Ingestion (use Python file i/o on downloaded text-based documents inside docs/)"] --> B["Chunking (LangChain’s SemanticChunker + fixed-size strategy)"]
+    B --> C["Embedding + Vector Store (sentence-transformers/bge-base-en-v1.5 + ChromaDB)"]
+    C --> D["Retrieval (cosine similarity + top-k search from chromadb)"]
+    D --> E["Generation (llama-3.3-70b-versatile LLM model)"]
+```
 
 ---
 
@@ -124,8 +159,18 @@ This knowledge is valuable because it usually comes from students' practical exp
      "I'll give Claude my Chunking Strategy section and ask it to implement chunk_text()
      with my specified chunk size and overlap" is a plan. -->
 
-**Milestone 3 — Ingestion and chunking:**
+**Milestone 3 — Ingestion and chunking:** I'll give github copilot my documents and the chunking strategy, chunk size, and overlap size stated in planning.md. I'll ask it to analyze the doc and define important metadata I should include with each chunk. Then, the AI will help me implement ingest_documents() and chunk_document(doc).
+
+ingest_documents() should load the raw documents, clean or preprocess them as needed (remove navigation text, ads, etc.), and produce structured text ready for chunking.
+
+chunk_document() should split the documents into chunks using semantic chunking for long-review docs, and sentence chunking for docs with short comments.
 
 **Milestone 4 — Embedding and retrieval:**
+I'll ask claude to explain how i can use chromadb's embedding functions and query functions based on semantic similarity search. Then i'll ask it to implement embed_and_store() and retrieve(query)
+
+For the retrieval part, I'd also ask AI to implement a retrieve_v2(query) function where I combine semantic search with keyword (BM25) search, so that i can examine the affectiveness of each the hybrid retrieval method
 
 **Milestone 5 — Generation and interface:**
+For generate, I'd build a prompt and use claude to strengthen my prompt to make sure my LLM model generates answers using only the retrieved chunks as context and include source attribution.
+
+For the interface, I'd use claude to plan out the interface design, pick out some library i can use to generate UI in python project, and finally ask it to generate the UI for me.
