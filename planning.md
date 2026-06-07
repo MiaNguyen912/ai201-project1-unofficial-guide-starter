@@ -111,6 +111,7 @@ For short, opinion-based reviews, chunking should preserve the full fact. If I s
 | 3 |Is the UCI housing lottery actually random, or are there patterns students report?|The process is competitive and lottery-like.|
 | 4 |how is the safety level at Middle Earth?|Middle Earth is generally safe, but students mention some practical issues in the classics like older facilities, pests, and maintenance problems|
 | 5 |how is the living cost for off‑campus complexes near UCI compared to on‑campus dorm options?|On-campus dorms can be expensive especially when meal plan are required. Off-campus can be more flexible, but not always cheaper.|
+| 6 |Is the weather good today?|I couldn't find anything relevant in my knowledge base.|
 
 
 ---
@@ -172,11 +173,35 @@ I'll ask claude to explain how i can use chromadb's embedding functions and quer
 
 For the retrieval part, I'd also ask AI to implement a retrieve_v2(query) function where I combine semantic search with keyword (BM25) search, so that i can examine the affectiveness of each the hybrid retrieval method
 
-Prompt used: ```Use my planning.md Retrieval Approach section and my pipeline diagram to adjust the following two functions according to the description in planning.md:
- - embed_and_store(): loads chunks from your ingestion pipeline, embeds with bge-base-en-v1.5, stores in ChromaDB with source metadata
-- retrieve(): accepts a query string and returns the top-k most relevant chunks along with their source information. ```
+Prompt used: ``` Use my planning.md Retrieval Approach section and my pipeline diagram to adjust the following two functions according to the description in planning.md: embed_and_store(): loads chunks from your ingestion pipeline, embeds with bge-base-en-v1.5, stores in ChromaDB with source metadata; retrieve(): accepts a query string and returns the top-k most relevant chunks along with their source information. ```
 
 **Milestone 5 — Generation and interface:**
 For generate, I'd build a prompt and use claude to strengthen my prompt to make sure my LLM model generates answers using only the retrieved chunks as context and include source attribution.
 
-For the interface, I'd use claude to plan out the interface design, pick out some library i can use to generate UI in python project, and finally ask it to generate the UI for me.
+prompt used: ```Use the details and the pipeline diagram in planning.md to complete generate_response(query, retrieved_chunks) according to the description in planning.md. You’d use the Groq client and the LLM model listed in the config file to generate answer given a query and retrieved_chunks list. To prevent hallucination, you should filter out chunks that have a distance passes DISTANCE_THRESHOLD. Build a prompt and feed it to the LLM, which include the relevant chunks as context, user query, and the following paragraph to ensure generating grounded truth answer: “Answer using only the retrieved rule text below; do not use outside knowledge or guess. Do not fabricate, infer, or add information not present in the context. If the text does not contain the answer, reply exactly: I don't know - the answer is not found in the provided rule text. If multiple chunks conflict or are ambiguous, state that the rules are ambiguous and list the relevant citations. Cite sources using the format: [source: <file_name>, <created_date>] or [source: <file_name>] if <created_date> is not available. Keep answers concise and quote verbatim only when explicitly quoting”```
+
+
+For the interface, I'd use claude to plan out the interface design, pick out some library i can use to generate UI in python project, and finally ask it to generate the UI for me and tune it gradually.
+
+Prompt used: 
+```bash
+now, can you build a UI for an AI chat box using gradio and add it to @app.py. I want to have a chatbox that allow user to input query and a submit button that will trigger generate_response(query) when clicked. Decorate the UI to make it neat, modern, professional, using dark gray as background color, blue and yellow as primary colors.  A minimal working interface looks like this: 
+
+import gradio as gr
+from query import ask  # or wherever your end-to-end function lives
+
+def handle_query(question):
+    result = ask(question)
+    sources = "\n".join(f"• {s}" for s in result["sources"])
+    return result["answer"], sources
+
+with gr.Blocks() as demo:
+    inp = gr.Textbox(label="Your question")
+    btn = gr.Button("Ask")
+    answer = gr.Textbox(label="Answer", lines=8)
+    sources = gr.Textbox(label="Retrieved from", lines=4)
+    btn.click(handle_query, inputs=inp, outputs=[answer, sources])
+    inp.submit(handle_query, inputs=inp, outputs=[answer, sources])
+
+demo.launch()
+```

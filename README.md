@@ -46,13 +46,10 @@ rm -rf chromadb_uci_housing_dataset/
 ```
 
 ### 6. Run the app
-
+Run the app using the command below, then open http://localhost:7860 to access it
 ```bash
 python app.py
 ```
-
-
-
 
 
 
