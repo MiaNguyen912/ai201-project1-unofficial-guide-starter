@@ -67,7 +67,7 @@ if __name__ == "__main__":
         else:
             print("No chunks to embed and store. Please check the previous steps for issues.")
             
-            
+    
             
     # ------ (Optional) Retrieve test -------
     print("\nTesting retrieval with sample queries:")
