@@ -57,6 +57,10 @@ _NOISE_PATTERNS = [
     r"^view all listings\s*$",
     r"^tripalink is here",
 
+    # Browser print header repeated on every page: "<date>, <time> <title>"
+    # e.g. "6/6/26, 2:33 PM Where to look for housing"
+    r"^\d{1,2}/\d{1,2}/\d{2,4},\s*\d{1,2}:\d{2}\s*[ap]m\b",
+
     # Pagination / standalone page numbers
     r"^page \d+ of \d+\s*$",
     r"^\d+\s*$",                                                    # lone digit(s)

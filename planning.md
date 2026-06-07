@@ -161,11 +161,11 @@ graph LR
 
 **Milestone 3 — Ingestion and chunking:** I'll give github copilot my documents and the chunking strategy, chunk size, and overlap size stated in planning.md. I'll ask it to analyze the doc and define important metadata I should include with each chunk. Then, the AI will help me implement ingest_documents() and chunk_document(doc).
 
-Before ingesting the docs, I'll ask claude to generate preprocess_pdf() where pdf files saved in the documents/ folder are extracted, clean, and pre-processed (remove navigation text, ads, etc.) to reduce noise.
+Before ingesting the docs, I'll ask claude to generate a preprocessing functions where pdf files are extracted, clean, and pre-processed (remove navigation text, ads, etc.) to reduce noise. This function would also detect if the page, like reddit threads, has a right-side section that only displays urls of related Reddit posts and discard it, as it's considered as noise and would make reading pdf line by line messed up (the left and right-side content would be mixed if they're on the same line)
 
 ingest_documents() should load the cleaned documents from the preprocess_pdf(), augmented the text with appropriate metadata (timestamp, site name, url) and produce structured dictionary with text ready for chunking.
 
-chunk_document() should split the documents into chunks using semantic chunking for long-review docs, and sentence chunking for docs with short comments.
+chunk_document() should split the documents into chunks using semantic chunking for long-review docs, and sentence chunking for docs with short comments. (prompt used: "now, help me implement chunk_document(doc_item), with doc_item is an item in the list of dictionary returned from load_documents(). Read the Chunking Strategy inside @planning.md for details.  chunk_document() should split the documents into chunks using semantic chunking for long-review docs, and fixed-size chunking (or sentence chunking if possible) for docs with short comments. the currently commented out part in chunk_document() is the simple version of it using only fixed-size chunking, you may use it as an example.")
 
 **Milestone 4 — Embedding and retrieval:**
 I'll ask claude to explain how i can use chromadb's embedding functions and query functions based on semantic similarity search. Then i'll ask it to implement embed_and_store() and retrieve(query)
