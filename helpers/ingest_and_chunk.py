@@ -2,7 +2,7 @@ import os
 import re
 from config import (
     EMBEDDING_MODEL,
-    CHUNK_SIZE,
+    MAX_CHUNK_SIZE,
     CHUNK_OVERLAP_WORDS,
     MIN_CHUNK_SIZE,
     LONG_DOC_THRESHOLD,
@@ -93,12 +93,12 @@ def _sentence_split(text):
     """
     Sentence chunking for short comment/review docs.
 
-    Greedily packs whole sentences into a chunk up to CHUNK_SIZE characters, then
+    Greedily packs whole sentences into a chunk up to MAX_CHUNK_SIZE characters, then
     starts the next chunk with the last CHUNK_OVERLAP_WORDS words of the previous
     one so a fact spanning a boundary stays retrievable. Keeping sentences intact
     avoids cutting a short opinion in half.
     """
-    sentences = [s.strip() for s in _SENTENCE_RE.split(text) if s.strip()]
+    sentences = [s.strip() for s in _SENTENCE_RE.split(text) if s.strip()] # split text into sentences
     chunks = []
     current = []
     current_len = 0
@@ -106,7 +106,7 @@ def _sentence_split(text):
     for sent in sentences:
         # Flush the current chunk before it would overflow, then seed the next
         # chunk with a trailing-word overlap from what we just emitted.
-        if current and current_len + len(sent) + 1 > CHUNK_SIZE:
+        if current and current_len + len(sent) + 1 > MAX_CHUNK_SIZE:
             chunks.append(" ".join(current))
             overlap = " ".join(chunks[-1].split()[-CHUNK_OVERLAP_WORDS:])
             current = [overlap] if overlap else []
@@ -135,9 +135,11 @@ def chunk_document(doc_item):
     text = doc_item["text"]
     prefix = _slugify(os.path.splitext(doc_item["filename"])[0])
 
-    if len(text) >= LONG_DOC_THRESHOLD:
+    if len(text) >= LONG_DOC_THRESHOLD and doc_item["site"].lower() != "reddit":
+        print(f"Document '{doc_item['filename']}' is long ({len(text)} chars), using semantic chunking.")
         pieces = _semantic_split(text)
     else:
+        print(f"Document '{doc_item['filename']}' is short or having comment thread style ({len(text)} chars), using sentence chunking.") 
         pieces = _sentence_split(text)
 
     chunks = []

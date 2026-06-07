@@ -90,12 +90,8 @@ def retrieve(query, n_results=N_RESULTS):
     metadatas = relevant_chunks["metadatas"][0]
     distances = relevant_chunks["distances"][0]
 
-    print(f"Retrieved {len(documents)} relevant chunk(s) for query: '{query}'")
-    for metadata, distance in zip(metadatas, distances):
-        print(f"[{metadata['site']} | {metadata['created_date']}] (dist: {distance:.3f})")
-    print("\n")
-
     # Build return list: each item has text, source info, and distance
+    print(f"Retrieved {len(documents)} relevant chunk(s) for query: '{query}'")
     retrieved_chunks = []
     for text, metadata, distance in zip(documents, metadatas, distances):
         retrieved_chunks.append({
@@ -105,6 +101,9 @@ def retrieve(query, n_results=N_RESULTS):
             "filename": metadata["filename"],
             "distance": distance,
         })
+        print(f"[{metadata['filename']} --- text: {text[:20]}...] (dist: {distance:.3f})")
+    print("\n")
+
 
     # Results are already sorted by distance (ascending) from ChromaDB
     return retrieved_chunks

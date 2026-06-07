@@ -61,12 +61,12 @@ This knowledge is valuable because it usually comes from students' practical exp
 
 -->
 
-**Chunk size:** Semantic chunks for long guide sections + 50-characters fixed-size chunks for short comment/review Reddit
+**Chunk size:** Semantic chunks for long guide sections + 3-sentence (about 500 characters) fixed-size chunks for short comment/review Reddit
 
 **Overlap:** 10 words when fixed-size splitting is needed
 
 **Reasoning:**
-After skimming the selected docs I noticed two patterns: Reddit threads contain many short comments (1–3 sentences), while the review/blog corpus has longer, multi-paragraph guides. Because of that mix, I should not force every document into the same fixed size. Instead, I will keep short comments and short reviews intact when possible, and use LangChain’s `SemanticChunker` for longer guide-style pages so the chunks follow topic boundaries.
+After skimming the selected docs I noticed two patterns: Reddit threads contain many short comments (3-4 sentences), while the review/blog corpus has longer, multi-paragraph guides. Because of that mix, I should not force every document into the same fixed size. Instead, I will keep short comments and short reviews intact when possible, and use LangChain’s `SemanticChunker` for longer guide-style pages so the chunks follow topic boundaries.
 
 For short, opinion-based reviews, chunking should preserve the full fact. If I split them too short, I may separate one fact into many chunks and lose its overall meaning, and if I make them too large, I may mix multiple topics together. For long guides, semantic chunking should keep related details together, and a small overlap helps preserve facts that cross chunk boundaries.
 ---
@@ -90,9 +90,16 @@ For short, opinion-based reviews, chunking should preserve the full fact. If I s
 
 **Embedding model:** bge-base-en-v1.5 via sentence-transformers
 
-**Top-k:** 10
+**Top-k:** 20
 
-**Production tradeoff reflection:** a simpler embedding model would be more memory-efficient and likely sufficient for a small project. However, I’m choosing the stronger model bge-base-en-v1.5 because it should improve semantic matching for subjective, opinion-heavy text. For retrieval step, I would have 2 retrieval functions, one for plain ChromaDB sematic search, and one for semantic + BM25 keyword search, so i can observe the tradeoff between pipeline complexity and effectiveness. Choosing k also comes with a tradeoff because higher k (more chunks) can give richer context, but may add noise to the context and make the final answer less focused.
+**Production tradeoff reflection:** 
+
+For a real production system, I'd weigh:
+- Cost: a local model (bge-base) has no per-query fee, while hosted APIs charge per token which adds up at scale since every chunk and query is embedded.
+- Context length: bge-base caps at 512 tokens so my chunks must stay under that. A longer-context model would allow bigger, more complete chunks.
+- top-k value: choosing top-k comes with a tradeoff because higher k (more chunks) can give richer context, but may add noise to the context and make the final answer less focused.
+- Multilingual support: bge-base is English-only so in production I'd switch to a multilingual model (e.g. bge-m3) to reach out to more users
+- Local vs. API-hosted: hosting local gives privacy and no rate limits but needs my own hardware, while using an API would avoid the hosting/operating overhead and offers stronger models, with a cost of more latency, money, and vendor dependency.
 
 
 ---
@@ -106,11 +113,11 @@ For short, opinion-based reviews, chunking should preserve the full fact. If I s
 
 | # | Question | Expected answer |
 |---|----------|-----------------|
-| 1 |Which dorms are quieter or more social, and which suit freshmen vs upperclassmen?|Mesa Court is often more social and Middle Earth is more quiet, and freshmen are required to stay in either of these. For continuing/transfer students, the Arroyo Vista apartments are one of the housing choices for them.|
+| 1 |Which dorms are quieter or more social, and which suit freshmen vs upperclassmen?|Middle Earth is often more social and Mesa Court is more quiet, and freshmen are required to stay in either of these. For continuing/transfer students, the Arroyo Vista apartments are one of the housing choices for them.|
 | 2 |What hidden costs should I expect besides housing rates?|Common extra costs include meal plans for on-campus dorms, separate parking fees for ACC/off-campus housing, and utilities in some apartments.|
 | 3 |Is the UCI housing lottery actually random, or are there patterns students report?|The process is competitive and lottery-like.|
-| 4 |how is the safety level at Middle Earth?|Middle Earth is generally safe, but students mention some practical issues in the classics like older facilities, pests, and maintenance problems|
-| 5 |how is the living cost for off‑campus complexes near UCI compared to on‑campus dorm options?|On-campus dorms can be expensive especially when meal plan are required. Off-campus can be more flexible, but not always cheaper.|
+| 4 |how is the safety level at Middle Earth?|I couldn't find anything relevant in my knowledge base. (There's not really direct information about Middle Earth's safety, but students mention some practical issues in the classics like older facilities, pests, and maintenance problems)|
+| 5 |how is the living cost for off‑campus complexes near UCI compared to on‑campus dorm options?| On-campus dorms can be expensive especially when meal plan are required. Off-campus can be more flexible, but not always cheaper.|
 | 6 |Is the weather good today?|I couldn't find anything relevant in my knowledge base.|
 
 

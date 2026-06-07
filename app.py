@@ -18,9 +18,9 @@ test_queries = [
 ]
 def run_ingestion_pipeline():
     # ------- extract text from all PDFs in DOCS_PATH_RAW directory and save to DOCS_PATH_CLEAN -------
-    # extracted = extract_all_pdfs(DOCS_PATH_RAW, DOCS_PATH_CLEAN)
-    # print(f"\nDone. Extracted text from {len(extracted)} PDF(s).")
-    # print("=" * 0)
+    extracted = extract_all_pdfs(DOCS_PATH_RAW, DOCS_PATH_CLEAN)
+    print(f"\nDone. Extracted text from {len(extracted)} PDF(s).")
+    print("=" * 0)
     
     # ------- ingest the .txt files and augmented them with metadata (e.g., filename, date, etc.) --------
     documents = load_documents(DOCS_PATH_CLEAN)
@@ -42,13 +42,13 @@ def run_ingestion_pipeline():
         all_chunks.extend(chunks)
         print(f"Document '{doc['filename']}' chunked into {len(chunks)} pieces after {end_time - start_time:.2f} seconds.")
     # print(f"Sample chunks from the first document:")
-    # for chunk in all_chunks[:5]:
-    #     print(f"Chunk ID: {chunk['chunk_id']}")
-    #     print(f"Site: {chunk['site']}")
-    #     print(f"Created Date: {chunk['created_date']}")
-    #     print(f"Filename: {chunk['filename']}")
-    #     print(f"Text: {chunk['text']}...")
-    #     print("-" * 50)
+    # for chunk in all_chunks:
+        # print(f"Chunk ID: {chunk['chunk_id']}")
+        # print(f"Site: {chunk['site']}")
+        # print(f"Created Date: {chunk['created_date']}")
+        # print(f"Filename: {chunk['filename']}")
+        # print(f"Text: {chunk['text']}\n")
+        # print("-" * 50)
     print(f"\nDone. Created {len(all_chunks)} chunks from {len(documents)} document(s).")
     print("=" * 50)
     
