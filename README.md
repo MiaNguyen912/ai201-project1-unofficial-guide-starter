@@ -37,11 +37,20 @@ cp .env.example .env
 
 Open `.env` and replace `your_key_here` with your key from [console.groq.com](https://console.groq.com). No credit card required.
 
-### 5. Run the app
+### 5. (optional) clear the stale chromadb store to re-ingest docs after chunking configuration changes
+
+ChromaDB persists to disk in `./chromadb_uci_housing_dataset`. If you change your chunking strategy and want to re-ingest, delete that folder and restart the app:
+ 
+``` bash
+rm -rf chromadb_uci_housing_dataset/
+```
+
+### 6. Run the app
 
 ```bash
 python app.py
 ```
+
 
 
 

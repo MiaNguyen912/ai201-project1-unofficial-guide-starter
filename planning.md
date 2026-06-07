@@ -172,6 +172,10 @@ I'll ask claude to explain how i can use chromadb's embedding functions and quer
 
 For the retrieval part, I'd also ask AI to implement a retrieve_v2(query) function where I combine semantic search with keyword (BM25) search, so that i can examine the affectiveness of each the hybrid retrieval method
 
+Prompt used: ```Use my planning.md Retrieval Approach section and my pipeline diagram to adjust the following two functions according to the description in planning.md:
+ - embed_and_store(): loads chunks from your ingestion pipeline, embeds with bge-base-en-v1.5, stores in ChromaDB with source metadata
+- retrieve(): accepts a query string and returns the top-k most relevant chunks along with their source information. ```
+
 **Milestone 5 — Generation and interface:**
 For generate, I'd build a prompt and use claude to strengthen my prompt to make sure my LLM model generates answers using only the retrieved chunks as context and include source attribution.
 
