@@ -178,7 +178,7 @@ chunk_document() should split the documents into chunks using semantic chunking 
 **Milestone 4 — Embedding and retrieval:**
 I'll ask claude to explain how i can use chromadb's embedding functions and query functions based on semantic similarity search. Then i'll ask it to implement embed_and_store() and retrieve(query)
 
-For the retrieval part, I'd also ask AI to implement a retrieve_v2(query) function where I combine semantic search with keyword (BM25) search, so that i can examine the affectiveness of each the hybrid retrieval method
+For the retrieval part, I'd also ask AI to implement a retrieve_v2(query) function where I combine semantic search with keyword (BM25) search, so that i can examine the affectiveness of each the hybrid retrieval method (note: this part has not been done)
 
 Prompt used: ``` Use my planning.md Retrieval Approach section and my pipeline diagram to adjust the following two functions according to the description in planning.md: embed_and_store(): loads chunks from your ingestion pipeline, embeds with bge-base-en-v1.5, stores in ChromaDB with source metadata; retrieve(): accepts a query string and returns the top-k most relevant chunks along with their source information. ```
 
