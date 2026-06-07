@@ -1,5 +1,6 @@
 import chromadb
 from chromadb.utils import embedding_functions
+from torch import chunk
 from config import CHROMA_COLLECTION, CHROMA_PATH, EMBEDDING_MODEL, N_RESULTS
 
 # Embedding function and ChromaDB client are initialized once at module load.
@@ -48,6 +49,7 @@ def embed_and_store(chunks):
                 "site": c["site"],
                 "created_date": c["created_date"],
                 "filename": c["filename"],
+                "chunk_id": c["chunk_id"],
             }
             for c in chunks
         ],
@@ -99,10 +101,20 @@ def retrieve(query, n_results=N_RESULTS):
             "site": metadata["site"],
             "created_date": metadata["created_date"],
             "filename": metadata["filename"],
+            "chunk_id": metadata["chunk_id"],
             "distance": distance,
         })
-        print(f"[{metadata['filename']} --- text: {text[:20]}...] (dist: {distance:.3f})")
-    print("\n")
+        # print(f"[{metadata['filename']} --- text: {text[:20]}...] (dist: {distance:.3f})")
+
+        print("{\n\ttext: " + text)
+        print("\tchunk_id: " + metadata["chunk_id"])
+        print("\tsite: " + metadata["site"])
+        print("\tcreated_date: " + metadata["created_date"])
+        print("\tfilename: " + metadata["filename"])
+        print("\tdistance: " + str(distance) + "\n}")
+        print("-" * 50)
+        
+    print("\n" + "="*20 + " Done retrieving relevant chunks " + "=" * 20)
 
 
     # Results are already sorted by distance (ascending) from ChromaDB
